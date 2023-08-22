@@ -1,0 +1,239 @@
+---
+title: "Introduction to R and RStudio"
+author: "MM4DBER Training Team"
+date: "Updated: `r format(Sys.time(), '%B %d, %Y')`"
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    toc: yes
+    toc_float: yes
+    theme: flatly
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+```{r, echo=FALSE}
+htmltools::img(src = knitr::image_uri(file.path("images/mm4dber_white.jpg")), 
+               alt = 'logo', 
+               style = 'position:absolute; top:0; right:0; padding:10px;',
+               width ="250",
+               height ="193")
+
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning = FALSE,
+                      message = FALSE) #Here, I have made it so that when you knit your .rmd, warnings and messages will not show up in the html markdown. 
+options(scipen=0)
+```
+
+------------------------------------------------------------------------
+
+# MM4DBER Project
+
+![](images/NSF-Logo.png){style="float: left;" width="300"}
+
+Mixture Modeling for Discipline Based Education Researchers (MM4DBER) is an NSF funded training grant to support STEM Education scholars in integrating mixture modeling into their research.
+
+-   Please [visit our website](https://mm4dbers.education.ucsb.edu/) to learn more and apply for the year-long fellowship.
+
+-   Follow us on [Twitter](https://twitter.com/mm4dbers)!
+
+Visit our [GitHub](https://github.com/MM4DBER/intro-to-rstudio) account to download the materials needed for this walkthrough.
+
+------------------------------------------------------------------------
+
+# Introduction to R and RStudio
+
+This walkthrough is presented by the MM4DBER team and will go through some common tasks carried out in R.
+There are many free resources available to get started with R and RStudio.
+One of our favorites is [*R for Data Science*](https://r4ds.had.co.nz/).
+
+------------------------------------------------------------------------
+
+## PART 1: Installation
+
+------------------------------------------------------------------------
+
+### Install: R, RStudio, and Mplus
+
+**Install R/Rstudio**: [Here](https://posit.co/download/rstudio-desktop/) you will find a guide to installing both R and R Studio.
+
+**Install Mplus**: To install the Mplus software go to their website [here](https://www.statmodel.com/orderonline/).
+
+*Note*: The installation of Mplus requires a paid license with the mixture add-on.
+IMMERSE fellows will be given their own copy of Mplus for use during the one year training.
+
+------------------------------------------------------------------------
+
+## PART 2: Set-up
+
+------------------------------------------------------------------------
+
+### Step 1: Create a new R-project in RStudio
+
+R-projects help us organize our folders , filepaths, and scripts.
+To create a new R project:
+
+-   File --\> New Project...
+
+Click "New Directory" --\> New Project --\> Name your project
+
+### Step 2: Create an R-markdown document
+
+An R-markdown file provides an authoring framework for data science that allows us to organize our reports using texts and code chunks.
+This document you are reading was made using R-markdown!
+
+To create an R-markdown:
+
+-   File --\> New File --\> R Markdown...
+
+In the window that pops up, give the R-markdown a title such as "**Introduction to R and RStudio**" Click "OK." You should see a new markdown with some example text and code chunks.
+We want a clean document to start off with so delete everything from line 10 down.
+Go ahead and save this document in your R Project folder.
+
+### Step 3: Load packages
+
+Your first code chunk in any given markdown should be the packages you will be using.
+To insert a code chunk, etiher use the keyboard shortcut ctrl + alt + i or Code --\> Insert Chunk or click the green box with the letter C on it.
+There are a few packages we want our markdown to read in:
+
+```{r}
+library(psych)     # describe()
+library(here)      # helps with specifying file paths
+library(gt)        # create tables
+library(tidyverse) # collection of R packages designed for data science
+
+library(janitor)
+```
+
+> As a reminder, if a function does not work and you receive an error like this: `could not find function "random_function"`; or if you try to load a package and you receive an error like this: `` there is no package called `random_package` `` , then you will need to install the package using `install.packages("random_package")` in the console (the bottom-left window in R studio).
+
+> Once you have installed the package you will *never* need to install it again, however you must *always* load in the packages at the beginning of your R markdown using `library(random_package)`, as shown in this document.
+
+> The style of code and package we will be using is called [`tidyverse`](https://www.tidyverse.org/). Most functions we use for data manipulation are available within the `tidyverse` package and if not, I've indicated the packages used in the code chunk above.
+
+------------------------------------------------------------------------
+
+## PART 3: Explore the data
+
+------------------------------------------------------------------------
+
+### Step 4: Read in data
+
+To demonstrate mixture modeling in the training program of the NSF grant we utilize the *Longitudinal Study of American Youth (LSAY)* data repository.
+
+```{r, echo=FALSE, eval=TRUE}
+
+var_table <- tribble(
+   ~"Name",      ~"Label",  ~"Values",                                   
+#--------------|--------------------------------|-----|,
+  "Enjoy",   "I enjoy science "                   ,  "0 = Disagree, 1 = Agree",
+  "Useful",  "Science useful in everday problems ",  "0 = Disagree, 1 = Agree",
+  "Logical", "Science helps logical thinkng "     ,  "0 = Disagree, 1 = Agree",
+  "Job",     "Need science for a good job "       ,  "0 = Disagree, 1 = Agree",
+  "Adult",   "Will use science often as an adult ",  "0 = Disagree, 1 = Agree",
+  "Female",   "Reported gender"                   ,  "0 = Male, 1 = Female")
+
+gt(var_table) %>% 
+  tab_header(
+    title = "",  # Add a title
+    subtitle = md("&nbsp;")) %>% 
+  tab_options(
+    table.width = pct(80),
+    column_labels.font.weight = "bold"
+  ) 
+
+```
+
+**To read in data in R:**
+```{r}
+data <- read_csv(here("data", "lca_lsay_sci.csv"),
+                      na = c("9999", "9999.00")) %>%               
+  clean_names() %>%                                                                        
+  dplyr::select(1:5, Female=female, Enjoy = ab39m, Useful = ab39t,                                              Logical = ab39u, Job = ab39w, Adult = ab39x)
+```
+
+```{r}
+# Save clean data
+write_csv(data, here("data", "lsay_sci_data.csv"))
+```
+
+**View data in R:**
+```{r}
+
+# 1. click on the data in your Global Environment (upper right pane) or use...
+View(data)
+# 2. summary() gives basic summary statistics & shows number of NA values
+# *great for checking that data has been read in correctly*
+summary(data)
+# 3. names() provides a list of column names. Very useful if you don't have them memorized!
+names(data)
+# 4. head() prints the top x rows of the dataframe
+head(data)
+```
+
+### Step 5: Descriptive Statistics
+
+Let's look at descriptive statistics for each variable.
+Because looking at the ID variables' (`leaid`) and (`necessch`) descriptives is unnecessary, we use `select()` to remove the variable by using the minus (`-`) sign:
+
+```{r}
+data %>% 
+  select(-Female) %>% 
+  summary()
+```
+
+Alternatively, we can use the `psych::describe()` function to give more information:
+
+```{r}
+data %>% 
+  select(-Female) %>% 
+  describe()
+```
+
+What if we want to look at a subset of the data?
+For example, what if we want to subset the data to observe a specific school district? (`leaid`)
+We can use `tidyverse::filter()` to subset the data using certain criteria.
+
+```{r}
+data %>% 
+  filter(Female == 1) %>% 
+  describe() 
+
+
+#You can use any operator to filter: >, <, ==, >=, etc.
+```
+
+
+Since we have binary data (e.g., 0s & 1s), it would be helpful to look at the proportions:
+
+```{r}
+data %>% 
+  drop_na() %>% 
+  pivot_longer(Enjoy:Adult, names_to = "variable") %>% 
+  group_by(variable) %>% 
+  summarise(prop = sum(value)/n(),
+            n = n()) %>%
+  arrange(desc(prop))
+```
+
+
+------------------------------------------------------------------------
+
+## References
+
+Hallquist, M. N., & Wiley, J. F. (2018). MplusAutomation: An R Package for Facilitating Large-Scale Latent Variable Analyses in Mplus. Structural equation modeling: a multidisciplinary journal, 25(4), 621-638.
+
+Muthén, L.K. and Muthén, B.O. (1998-2017). Mplus User's Guide. Eighth Edition. Los Angeles, CA: Muthén & Muthén
+
+R Core Team (2017). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL http://www.R-project.org/
+
+Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686, https://doi.org/10.21105/joss.01686
+
+------------------------------------------------------------------------
+
+![](images/UCSB_Navy_mark.png){width="75%"}

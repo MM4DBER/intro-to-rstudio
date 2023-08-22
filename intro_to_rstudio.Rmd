@@ -3,12 +3,12 @@ title: "Introduction to R and RStudio"
 author: "MM4DBER Training Team"
 date: "Updated: `r format(Sys.time(), '%B %d, %Y')`"
 output:
-  pdf_document:
-    toc: yes
   html_document:
-    toc: yes
-    toc_float: yes
+    toc: no
+    toc_float: no
     theme: flatly
+  pdf_document:
+    toc: no
 editor_options: 
   markdown: 
     wrap: sentence
@@ -24,13 +24,11 @@ htmltools::img(src = knitr::image_uri(file.path("images/mm4dber_white.jpg")),
 ```
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, 
-                      warning = FALSE,
-                      message = FALSE) #Here, I have made it so that when you knit your .rmd, warnings and messages will not show up in the html markdown. 
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE) 
 options(scipen=0)
 ```
 
-------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 # MM4DBER Project
 
@@ -44,7 +42,7 @@ Mixture Modeling for Discipline Based Education Researchers (MM4DBER) is an NSF 
 
 Visit our [GitHub](https://github.com/MM4DBER/intro-to-rstudio) account to download the materials needed for this walkthrough.
 
-------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 # Introduction to R and RStudio
 
@@ -52,25 +50,26 @@ This walkthrough is presented by the MM4DBER team and will go through some commo
 There are many free resources available to get started with R and RStudio.
 One of our favorites is [*R for Data Science*](https://r4ds.had.co.nz/).
 
-------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 ## PART 1: Installation
 
-------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
-### Step 0: Install R, RStudio, and Mplus
+### Install: R, RStudio, and Mplus
 
-[Here](https://posit.co/download/rstudio-desktop/) you will find a guide to installing both R and R Studio.
-You can also install Mplus [here](https://www.statmodel.com/orderonline/).
+- **Install R/Rstudio**: [Here](https://posit.co/download/rstudio-desktop/) you will find a guide to installing both R and R Studio.
+
+- **Install Mplus**: To install the Mplus software go to their website [here](https://www.statmodel.com/orderonline/).
 
 *Note*: The installation of Mplus requires a paid license with the mixture add-on.
-IMMERSE fellows will be given their own copy of Mplus for use during the one year training.
+MM4DBER fellows will be given their own copy of Mplus for use during the one year training.
 
-------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 ## PART 2: Set-up
 
-------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 ### Step 1: Create a new R-project in RStudio
 
@@ -101,119 +100,111 @@ To insert a code chunk, etiher use the keyboard shortcut ctrl + alt + i or Code 
 There are a few packages we want our markdown to read in:
 
 ```{r}
-library(psych) # describe()
-library(here) #helps with filepaths
-library(gt) # create tables
-library(tidyverse) #collection of R packages designed for data science
+library(psych)     # describe()
+library(here)      # helps with specifying file paths
+library(gt)        # create tables
+library(tidyverse) # collection of R packages designed for data science
 ```
 
-As a reminder, if a function does not work and you receive an error like this: `could not find function "random_function"`; or if you try to load a package and you receive an error like this: `` there is no package called `random_package` `` , then you will need to install the package using `install.packages("random_package")` in the console (the bottom-left window in R studio).
-Once you have installed the package you will *never* need to install it again, however you must *always* load in the packages at the beginning of your R markdown using `library(random_package)`, as shown in this document.
+**Common error message types:** [E.g.,...] 
 
-The style of code and package we will be using is called [`tidyverse`](https://www.tidyverse.org/) .
-Most functions are within the `tidyverse` package and if not, I've indicated the packages used in the code chunk above.
+- If a function does not work and you receive an error message: `could not find function "xxx_function"` 
+- or if you try to load a package and you receive an error like this: `` there is no package called `xxx_package` `` 
+- then you will need to install the package using: `install.packages("xxx_package")` 
 
-------------------------------------------------------------------------
+> NOTE: Once you have installed the package you will *never* need to install it again, however you must *always* load in the packages at the beginning of your R markdown using `library(xxx_package)`, as shown in this document.
+
+> The style of code we will use relies on the [`tidyverse`](https://www.tidyverse.org/) package. Most functions we use for data manipulation are available within the `tidyverse` package and if not, I've indicated the packages used in the code chunk above.
+
+# --------------------------------------------------------------------------------------
 
 ## PART 3: Explore the data
 
-------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 ### Step 4: Read in data
 
-To demonstrate mixture modeling in the training program and online resource components of the IES grant we utilize the *Civil Rights Data Collection (CRDC)* (CRDC) data repository.
-The CRDC is a federally mandated school-level data collection effort that occurs every other year.
-This public data is currently available for selected latent class indicators across 4 years (2011, 2013, 2015, 2017) and all US states.
-In this example, we use the Arizona state sample.
-We utilize six focal indicators which constitute the latent class model in our example; three variables which report on harassment/bullying in schools based on disability, race, or sex, and three variables on full-time equivalent school staff hires (counselor, psychologist, law enforcement).
-This data source also includes covariates on a variety of subjects and distal outcomes reported in 2018 such as math/reading assessments and graduation rates.
+To demonstrate mixture modeling in the training program of the NSF grant we utilize the *Longitudinal Study of American Youth (LSAY)* data repository.
 
-```{r, echo=FALSE, eval=TRUE}
+Table 1:
 
-tribble(
-   ~"Name",      ~"Label",  ~"Values",                                   
-#--------------|--------------------------------|-----|,
-  "leaid",   "District Identification Code", "",
-  "ncessch",   "School Identification Code", "",
-  "report_dis",   "Number of students harassed or bullied on the basis of disability",  "0 = No reported incidents, 1 = At least one reported incident",
-  "report_race",  "Number of students harassed or bullied on the basis of race, color, or national origin",  "0 = No reported incidents, 1 = At least one reported incident",
-  "report_sex", "Number of students harassed or bullied on the basis of sex",  "0 = No reported incidents, 1 = At least one reported incident",
-  "counselors_fte", "Number of full time equivalent counselors hired as school staff",  "0 = No staff present, 1 = At least one staff present",  
-  "report_sex", "Number of full time equivalent psychologists hired as school staff",  "0 = No staff present, 1 = At least one staff present",
-  "counselors_fte", "Number of full time equivalent law enforcement officers hired as school staff",  "0 = No staff present, 1 = At least one staff present") %>% 
-  gt() %>% 
-  tab_header(
-    title = "LCA indicators"  # Add a title
-  ) %>%
-  tab_options(
-    table.width = pct(75)
-  ) %>%
-  tab_footnote(
-    footnote = "Civil Rights Data Collection (CRDC)",
-    location = cells_title()) 
+*LSAY Variable Descriptions*.
 
-#PDF Option: 
-#kableExtra::kable(df, caption = "LCA Indicators", booktabs = TRUE) %>% 
-#  kableExtra::kable_styling(latex_options=c("striped","scale_down"))
+![](images/lsay_variables.png){style="float: left;" width="500"}
 
+**To read in data in R:**
+```{r}
+data <- read_csv(here("data", "lsay_sci_data.csv")) 
 ```
 
-**To read in data in R**:
-
+**View data in R:**
 ```{r}
-data <- read_csv(here("data", "crdc_lca_data.csv")) 
-
-# Ways to view data in R:
 # 1. click on the data in your Global Environment (upper right pane) or use...
 View(data)
+
 # 2. summary() gives basic summary statistics & shows number of NA values
-# *great for checking that data has been read in correctly*
-summary(data)
+summary(data) 
+
 # 3. names() provides a list of column names. Very useful if you don't have them memorized!
 names(data)
-# 4. head() prints the top x rows of the dataframe
+
+# 4. head() prints the top 5 rows of the dataframe
 head(data)
 ```
 
-### Step 5: Descriptive Statistics
+### Step 5: Select Columns and Filter Rows
+```{r}
+# Select columns one at a time
+data_attitudes <- data %>% 
+  select(Enjoy, Useful, Logical)
 
-Let's look at descriptive statistics for each variable.
-Because looking at the ID variables' (`leaid`) and (`necessch`) descriptives is unnecessary, we use `select()` to remove the variable by using the minus (`-`) sign:
+# Select columns left to right
+data_attitudes <- data %>% 
+  select(Enjoy:Adult)
+
+# Remove columns
+data_attitudes <- data %>% 
+  select(-Female)
+```
+
+What if we want to look at a subset of the data?
+
+- For example, what if we want to subset the data for female science attitudes? (`Female`)
+- We can use `tidyverse::filter()` to subset the data using certain criteria.
 
 ```{r}
-data %>% 
-  select(-leaid, -ncessch) %>% 
+# Filter rows
+data_female <- data %>% 
+  filter(Female == 1) 
+
+# You can use any operator to filter: >, <, ==, >=, etc.
+
+data_female %>% nrow()
+
+```
+
+
+### Step 6: Descriptive Statistics
+
+Let's look at descriptive statistics for each of the science attitude variables.
+
+```{r}
+data_attitudes %>% 
   summary()
 ```
 
 Alternatively, we can use the `psych::describe()` function to give more information:
 
 ```{r}
-data %>% 
-  select(-leaid, -ncessch) %>% 
+data_attitudes %>% 
   describe()
 ```
 
-What if we want to look at a subset of the data?
-For example, what if we want to subset the data to observe a specific school district? (`leaid`)
-We can use `tidyverse::filter()` to subset the data using certain criteria.
-
-```{r}
-data %>% 
-  filter(leaid == "0408800") %>% 
-  describe() 
-
-
-#You can use any operator to filter: >, <, ==, >=, etc.
-```
-
-
-Since we have binary data (0,1), it would be helpful to look at the proportions:
-
+Since we have binary data, it would be helpful to look at variable proportions:
 ```{r}
 data %>% 
   drop_na() %>% 
-  pivot_longer(report_dis:law_fte, names_to = "variable") %>% 
+  pivot_longer(Enjoy:Adult, names_to = "variable") %>% 
   group_by(variable) %>% 
   summarise(prop = sum(value)/n(),
             n = n()) %>%
@@ -221,7 +212,7 @@ data %>%
 ```
 
 
-------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 ## References
 
@@ -229,12 +220,10 @@ Hallquist, M. N., & Wiley, J. F. (2018). MplusAutomation: An R Package for Facil
 
 Muthén, L.K. and Muthén, B.O. (1998-2017). Mplus User's Guide. Eighth Edition. Los Angeles, CA: Muthén & Muthén
 
-US Department of Education Office for Civil Rights. (2014). Civil rights data collection data snapshot: School discipline. Issue brief no. 1.
-
 R Core Team (2017). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL http://www.R-project.org/
 
 Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686, https://doi.org/10.21105/joss.01686
 
-------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------
 
 ![](images/UCSB_Navy_mark.png){width="75%"}
