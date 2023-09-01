@@ -14,14 +14,6 @@ editor_options:
     wrap: sentence
 ---
 
-```{r, echo=FALSE}
-htmltools::img(src = knitr::image_uri(file.path("images/mm4dber_white.jpg")), 
-               alt = 'logo', 
-               style = 'position:absolute; top:0; right:0; padding:10px;',
-               width ="250",
-               height ="193")
-
-```
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE) 
@@ -30,80 +22,95 @@ options(scipen=0)
 
 # --------------------------------------------------------------------------------------
 
-# MM4DBER Project
+![](figures/mm4dber_white.jpg){style="float: left;" width="300"}
 
-![](images/NSF-Logo.png){style="float: left;" width="300"}
-
-Mixture Modeling for Discipline Based Education Researchers (MM4DBER) is an NSF funded training grant to support STEM Education scholars in integrating mixture modeling into their research.
-
--   Please [visit our website](https://mm4dbers.education.ucsb.edu/) to learn more and apply for the year-long fellowship.
-
--   Follow us on [Twitter](https://twitter.com/mm4dbers)!
-
-Visit our [GitHub](https://github.com/MM4DBER/intro-to-rstudio) account to download the materials needed for this walkthrough.
+![](figures/NSF-Logo.png){style="float: left;" width="300"}
 
 # --------------------------------------------------------------------------------------
 
-# Introduction to R and RStudio
+> Mixture Modeling for Discipline Based Education Researchers (MM4DBER) is an NSF funded training grant to support STEM Education scholars in integrating mixture modeling into their research.
 
-This walkthrough is presented by the MM4DBER team and will go through some common tasks carried out in R.
-There are many free resources available to get started with R and RStudio.
+#### Download project materials here: [GitHub Repository](https://github.com/MM4DBER/Pre-training-Day5)
+
+#### Return to landing page here: [MM4DBER Landing Page](https://mm4dber.github.io/)
+
+
+# --------------------------------------------------------------------------------------
+
+# Introduction:
+
+- This walkthrough is presented by the MM4DBER team and will go through some common tasks carried out in R.
+- There are many free resources available to get started with R and RStudio.
 One of our favorites is [*R for Data Science*](https://r4ds.had.co.nz/).
 
 # --------------------------------------------------------------------------------------
 
-## PART 1: Installation
+### Step 1: Open RStudio
+
+![](figures/rstudio.jpg)
+
+Open R studio on your desktop.
+
+**IMPORTANT**: Because we are using a package that communicates with Mplus, we *must* use have Mplus installed to run Rstudio.
 
 # --------------------------------------------------------------------------------------
 
-### Install: R, RStudio, and Mplus
+### Step 2: Create a new R-project
 
-- **Install R/Rstudio**: [Here](https://posit.co/download/rstudio-desktop/) you will find a guide to installing both R and R Studio.
-
-- **Install Mplus**: To install the Mplus software go to their website [here](https://www.statmodel.com/orderonline/).
-
-*Note*: The installation of Mplus requires a paid license with the mixture add-on.
-MM4DBER fellows will be given their own copy of Mplus for use during the one year training.
-
-# --------------------------------------------------------------------------------------
-
-## PART 2: Set-up
-
-# --------------------------------------------------------------------------------------
-
-### Step 1: Create a new R-project in RStudio
+![](figures/rproject.jpg)
 
 R-projects help us organize our folders , filepaths, and scripts.
 To create a new R project:
 
--   File --\> New Project...
+0. File --\>  New Project...
 
-Click "New Directory" --\> New Project --\> Name your project
+1. Click "New Directory" --\> New Project --\> Name your project (e.g., "introR-day5")
 
-### Step 2: Create an R-markdown document
+**NOTE ABOUT PROJECT LOCATION (IMPORTANT)**: Choose a location on your computer that is not in too many enclosing folders. If your file path is too long (longer than 90 characters), Mplus cuts off the file.path and you will receive an **error message**. 
 
-An R-markdown file provides an authoring framework for data science that allows us to organize our reports using texts and code chunks.
-This document you are reading was made using R-markdown!
+2. Click "Create Project" to save your project (It will save as a folder on your computer).
+
+3. Copy all the materials found on Github into this new project folder you created.
+    
+# --------------------------------------------------------------------------------------
+
+### Step 3: Create an R-markdown document
+
+![](figures/markdown.jpg)
+
+- [`R-markdown`](https://rmarkdown.rstudio.com/): The `R-markdown` format provides a platform for us to neatly share our data science results. It allows us to organize our reports using texts, figures, and R code.
+
+- This document you are reading was made using R-markdown!
+
+- Next we will create an R-markdown file and write script to run a `type=basic` analysis using the R package, `MplusAutomation`.
 
 To create an R-markdown:
 
--   File --\> New File --\> R Markdown...
+0. File --\> New File --\> R Markdown...
 
-In the window that pops up, give the R-markdown a title such as "**Introduction to R and RStudio**" Click "OK." You should see a new markdown with some example text and code chunks.
-We want a clean document to start off with so delete everything from line 10 down.
-Go ahead and save this document in your R Project folder.
+1. Give the R-markdown a title such as "**Introduction to Rstudio**" Click "OK." You should see a new markdown with some example text and code chunks.
 
-### Step 3: Load packages
+2. We want a clean document to start off with so delete everything from line 10 down.
 
-Your first code chunk in any given markdown should be the packages you will be using.
-To insert a code chunk, etiher use the keyboard shortcut ctrl + alt + i or Code --\> Insert Chunk or click the green box with the letter C on it.
-There are a few packages we want our markdown to read in:
+3. Go ahead and save this document.
+
+# --------------------------------------------------------------------------------------
+
+### Step 4: Load packages
+
+- The first code chunk (lines 8-10) is call the r setup code chunk. This will set the defaults for your document. For now we will leave this as is. 
+- The next code chunk in any given markdown should be the packages you will be using.
+- To insert a code chunk, either use the keyboard shortcut `ctrl + alt + i` OR click the green button with the letter `C` on it (top panel).
+- There are a few packages we want to read in:
 
 ```{r}
 library(psych)     # describe()
 library(here)      # helps with specifying file paths
 library(gt)        # create tables
 library(tidyverse) # collection of R packages designed for data science
+
+#install.packages("palmerpenguins")
+library(palmerpenguins) # data for plot example
 ```
 
 **Common error message types:** [E.g.,...] 
@@ -118,11 +125,37 @@ library(tidyverse) # collection of R packages designed for data science
 
 # --------------------------------------------------------------------------------------
 
-## PART 3: Explore the data
+### Step 5: Make a quick plot (To show off what R can do!)
+
+Look first
+```{r}
+head(penguins)
+```
+
+Plot!
+```{r}
+
+ggplot(data = penguins, aes(x = flipper_length_mm, fill = species)) +
+  geom_histogram(position = "identity") 
+
+# Extras to make plot pretty
+# 1.  alpha = 0.5, 
+# 2.  scale_fill_manual(values = c("darkorange","purple","cyan4"))
+# 3.  labs(x = "Flipper length (mm)", y = "Frequency")
+# 4.  theme_minimal()
+
+
+
+```
 
 # --------------------------------------------------------------------------------------
 
-### Step 4: Read in data
+## Explore data
+
+# --------------------------------------------------------------------------------------
+
+
+### Step 6: Read in data
 
 To demonstrate mixture modeling in the training program of the NSF grant we utilize the *Longitudinal Study of American Youth (LSAY)* data repository.
 
@@ -130,7 +163,7 @@ Table 1:
 
 *LSAY Variable Descriptions*.
 
-![](images/lsay_variables.png){style="float: left;" width="500"}
+![](figures/lsay_variables.png){style="float: left;" width="500"}
 
 **To read in data in R:**
 ```{r}
@@ -152,7 +185,15 @@ names(data)
 head(data)
 ```
 
-### Step 5: Select Columns and Filter Rows
+### Step 7: Manipulating `data.frames` (select columns and filter rows)
+
+Look at a functions documentation: What does the `select()` function do?
+```{r, eval=FALSE}
+
+?select()
+```
+
+Selecting variables or columns of a `data.frame`
 ```{r}
 # Select columns one at a time
 data_attitudes <- data %>% 
@@ -166,6 +207,7 @@ data_attitudes <- data %>%
 data_attitudes <- data %>% 
   select(-Female)
 ```
+
 
 What if we want to look at a subset of the data?
 
@@ -184,7 +226,7 @@ data_female %>% nrow()
 ```
 
 
-### Step 6: Descriptive Statistics
+### Step 8: Descriptive Statistics
 
 Let's look at descriptive statistics for each of the science attitude variables.
 
@@ -226,4 +268,4 @@ Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Softwar
 
 # --------------------------------------------------------------------------------------
 
-![](images/UCSB_Navy_mark.png){width="75%"}
+![](figures/UCSB_Navy_mark.png){width="75%"}
