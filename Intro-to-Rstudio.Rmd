@@ -82,24 +82,20 @@ To create a new R project:
 
 - This document you are reading was made using R-markdown!
 
-- Next we will create an R-markdown file and write script to run a `type=basic` analysis using the R package, `MplusAutomation`.
-
-To create an R-markdown:
+**To create an R-markdown:**
 
 0. File --\> New File --\> R Markdown...
 
 1. Give the R-markdown a title such as "**Introduction to Rstudio**" Click "OK." You should see a new markdown with some example text and code chunks.
 
-2. We want a clean document to start off with so delete everything from line 10 down.
-
-3. Go ahead and save this document.
+2. Go ahead and save this document. Not that *.rmd* scripts are saved in the top project folder.
 
 # --------------------------------------------------------------------------------------
 
 ### Step 4: Load packages
 
 - The first code chunk (lines 8-10) is call the r setup code chunk. This will set the defaults for your document. For now we will leave this as is. 
-- The next code chunk in any given markdown should be the packages you will be using.
+- The next code chunk in any given R-markdown should be the packages you will be using.
 - To insert a code chunk, either use the keyboard shortcut `ctrl + alt + i` OR click the green button with the letter `C` on it (top panel).
 - There are a few packages we want to read in:
 
@@ -185,13 +181,21 @@ names(data)
 head(data)
 ```
 
-### Step 7: Manipulating `data.frames` (select columns and filter rows)
-
 Look at a functions documentation: What does the `select()` function do?
 ```{r, eval=FALSE}
 
 ?select()
 ```
+
+**Three useful keyboard shortcuts**:
+1. Create a new code block: `Cmd + Option + I` (windows; `Ctrl + Alt + I`)
+2. Inside a code block (`<-`): `option + dash (-)` 
+3. Inside a code block (`%>%`): `Ctrl + Shift + M`
+
+# --------------------------------------------------------------------------------------
+
+### Step 7: Manipulating `data.frames` (select columns and filter rows)
+
 
 Selecting variables or columns of a `data.frame`
 ```{r}
@@ -225,7 +229,6 @@ data_female %>% nrow()
 
 ```
 
-
 ### Step 8: Descriptive Statistics
 
 Let's look at descriptive statistics for each of the science attitude variables.
@@ -253,6 +256,11 @@ data %>%
   arrange(desc(prop))
 ```
 
+# --------------------------------------------------------------------------------------
+
+### Step 9: Knit document 
+
+At the top menu click the `Knit` option and choose `Knit to HTML` 
 
 # --------------------------------------------------------------------------------------
 
