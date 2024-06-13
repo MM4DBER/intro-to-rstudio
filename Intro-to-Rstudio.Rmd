@@ -9,15 +9,12 @@ output:
     theme: flatly
   pdf_document:
     toc: no
-editor_options: 
-  markdown: 
-    wrap: sentence
 ---
-
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE) 
 options(scipen=0)
+
 ```
 
 # --------------------------------------------------------------------------------------
@@ -51,7 +48,7 @@ One of our favorites is [*R for Data Science*](https://r4ds.had.co.nz/).
 
 Open R studio on your desktop.
 
-**IMPORTANT**: Because we are using a package that communicates with Mplus, we *must* use have Mplus installed to run Rstudio.
+**IMPORTANT**: Because we are using a package that communicates with Mplus, we *must* use have Mplus installed to use the `MplusAutomation` package.
 
 # --------------------------------------------------------------------------------------
 
@@ -94,7 +91,7 @@ To create a new R project:
 
 ### Step 4: Load packages
 
-- The first code chunk (lines 8-10) is call the r setup code chunk. This will set the defaults for your document. For now we will leave this as is. 
+- The first code chunk (lines 8-10) is called the "r setup" code chunk. This will set the defaults for your document. For now we will leave this as is. 
 - The next code chunk in any given R-markdown should be the packages you will be using.
 - To insert a code chunk, either use the keyboard shortcut `ctrl + alt + i` OR click the green button with the letter `C` on it (top panel).
 - There are a few packages we want to read in:
@@ -153,7 +150,7 @@ ggplot(data = penguins, aes(x = flipper_length_mm, fill = species)) +
 
 ### Step 6: Read in data
 
-To demonstrate mixture modeling in the training program of the NSF grant we utilize the *Longitudinal Study of American Youth (LSAY)* data repository.
+We will use an ongoing example to demonstrate estimating models. The public-use sample is called the  *Longitudinal Study of American Youth (LSAY)* data repository.
 
 Table 1:
 
@@ -161,12 +158,17 @@ Table 1:
 
 ![](figures/lsay_variables.png){style="float: left;" width="500"}
 
+# --------------------------------------------------------------------------------------
+
 **To read in data in R:**
+
 ```{r}
 data <- read_csv(here("data", "lsay_sci_data.csv")) 
 ```
 
+
 **View data in R:**
+
 ```{r}
 # 1. click on the data in your Global Environment (upper right pane) or use...
 View(data)
@@ -188,6 +190,7 @@ Look at a functions documentation: What does the `select()` function do?
 ```
 
 **Three useful keyboard shortcuts**:
+
 1. Create a new code block: `Cmd + Option + I` (windows; `Ctrl + Alt + I`)
 2. Inside a code block (`<-`): `option + dash (-)` 
 3. Inside a code block (`%>%`): `Ctrl + Shift + M`
@@ -258,7 +261,7 @@ data %>%
 
 # --------------------------------------------------------------------------------------
 
-### Step 9: Knit document 
+### Step 9: Knit document (optional)
 
 At the top menu click the `Knit` option and choose `Knit to HTML` 
 
